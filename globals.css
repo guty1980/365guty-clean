@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 0%; /* Negro Netflix */
+    --foreground: 0 0% 100%; /* Blanco */
+    --card: 0 0% 7%; /* Gris muy oscuro */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 100% 63%; /* Rojo Netflix */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 100% 63%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 0 100% 63%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-black text-white;
+    font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Estilos específicos para Android TV y navegación con control remoto */
+@layer components {
+  .netflix-focus {
+    @apply outline-none ring-2 ring-red-500 ring-opacity-75;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Optimizaciones para pantallas TV */
+  @media (min-width: 1024px) {
+    .tv-optimized {
+      font-size: 1.125rem; /* Texto más grande para TV */
+    }
+    
+    .tv-button {
+      @apply px-6 py-3 text-lg; /* Botones más grandes */
+    }
+    
+    .tv-card {
+      @apply transform-gpu; /* Aceleración de hardware */
+    }
+  }
+
+  /* Efectos de hover mejorados */
+  .netflix-card {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .netflix-card:hover {
+    @apply scale-105 shadow-2xl;
+  }
+  
+  .netflix-card:focus {
+    @apply ring-2 ring-red-500 ring-opacity-75 outline-none;
+  }
+
+  /* Gradientes Netflix */
+  .netflix-gradient {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  }
+  
+  .netflix-hero-gradient {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      transparent 100%
+    );
+  }
+
+  /* Loading states */
+  .netflix-loading {
+    @apply animate-pulse bg-gray-800;
+  }
+
+  /* Video player styles */
+  .video-player {
+    @apply w-full h-full object-cover bg-black;
+  }
+  
+  .video-controls {
+    @apply absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4;
+  }
+
+  /* Modal styles */
+  .netflix-modal {
+    @apply fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center p-4;
+  }
+  
+  .netflix-modal-content {
+    @apply bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto;
+  }
+
+  /* Form styles */
+  .netflix-input {
+    @apply bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 focus:border-red-500 focus:ring-red-500;
+  }
+  
+  .netflix-button {
+    @apply bg-red-600 hover:bg-red-700 text-white font-semibold transition-colors duration-200;
+  }
+  
+  .netflix-button-secondary {
+    @apply bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200;
+  }
+
+  /* Grid layouts */
+  .netflix-grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4;
+  }
+  
+  .netflix-admin-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  /* Typography */
+  .netflix-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight;
+  }
+  
+  .netflix-subtitle {
+    @apply text-lg md:text-xl text-gray-300 leading-relaxed;
+  }
+  
+  .netflix-caption {
+    @apply text-sm text-gray-400;
+  }
+
+  /* Animation utilities */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .slide-in-left {
+    animation: slideInLeft 0.5s ease-out;
+  }
+  
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Focus management for TV navigation */
+  .tv-focusable {
+    @apply outline-none transition-all duration-200;
+  }
+  
+  .tv-focusable:focus {
+    @apply ring-2 ring-red-500 ring-opacity-75 scale-105;
+  }
+  
+  /* Custom scrollbar for desktop */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded-lg;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
+}
+
+/* Responsive optimizations for TV screens */
+@media (min-width: 1920px) {
+  .tv-large {
+    font-size: 1.25rem;
+  }
+  
+  .tv-title-large {
+    font-size: 4rem;
+  }
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+  .netflix-card {
+    @apply border border-white/20;
+  }
+  
+  .netflix-button {
+    @apply border border-white;
+  }
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

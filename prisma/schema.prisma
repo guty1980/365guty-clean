@@ -1,0 +1,152 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+// Modelo de Usuario
+model User {
+    id                String    @id @default(cuid())
+    name              String
+    password          String
+    allowedDevices    Int       @default(1) // 1, 2 o 3 dispositivos permitidos
+    isSuspended       Boolean   @default(false)
+    isAdmin           Boolean   @default(false)
+    createdAt         DateTime  @default(now())
+    updatedAt         DateTime  @updatedAt
+    
+    // Relaciones
+    sessions          Session[]
+    sentMessages      Message[] @relation("SentMessages")
+    receivedMessages  Message[] @relation("ReceivedMessages")
+    
+    @@map("users")
+}
+
+// Modelo de Sesión para autenticación personalizada
+model Session {
+    id        String   @id @default(cuid())
+    userId    String
+    token     String   @unique
+    deviceId  String?  // Para controlar dispositivos permitidos
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+    
+    // Relaciones
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    @@map("sessions")
+}
+
+// Modelo de Película
+model Movie {
+    id           String   @id @default(cuid())
+    title        String
+    synopsis     String
+    genre        String
+    year         Int
+    duration     Int      // En minutos
+    ranking      Float    @default(0.0) // 0.0 a 10.0
+    coverUrl     String   // URL portada 500x720px
+    videoUrl     String   // URL video directo o M3U8
+    isRecommended Boolean @default(false) // Para carrusel principal
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    
+    @@map("movies")
+}
+
+// Modelo de Serie
+model Series {
+    id           String   @id @default(cuid())
+    title        String
+    synopsis     String
+    genre        String
+    year         Int
+    seasons      Int      // Número de temporadas (calculado automáticamente)
+    episodes     Int      // Total de episodios (calculado automáticamente)
+    ranking      Float    @default(0.0) // 0.0 a 10.0
+    coverUrl     String   // URL portada 500x720px
+    videoUrl     String   // URL video directo o M3U8 (trailer de la serie)
+    isRecommended Boolean @default(false) // Para carrusel principal
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    
+    // Relaciones
+    seasonsList  Season[] // Temporadas de esta serie
+    
+    @@map("series")
+}
+
+// Modelo de Temporada
+model Season {
+    id          String   @id @default(cuid())
+    seriesId    String
+    number      Int      // Número de temporada (1, 2, 3, etc.)
+    title       String   // Título de la temporada
+    year        Int      // Año de la temporada
+    description String?  // Descripción opcional de la temporada
+    coverUrl    String?  // URL portada específica de la temporada (opcional)
+    totalEpisodes Int    @default(0) // Total de episodios (calculado automáticamente)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    // Relaciones
+    series      Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+    episodes    Episode[] // Episodios de esta temporada
+    
+    @@unique([seriesId, number]) // Una serie no puede tener temporadas duplicadas
+    @@map("seasons")
+}
+
+// Modelo de Episodio
+model Episode {
+    id          String   @id @default(cuid())
+    seasonId    String
+    number      Int      // Número de episodio dentro de la temporada
+    title       String   // Título del episodio
+    synopsis    String?  // Sinopsis del episodio
+    duration    Int      // Duración en minutos
+    videoUrl    String   // URL del video del episodio
+    thumbnailUrl String? // URL de miniatura del episodio (opcional)
+    airDate     DateTime? // Fecha de emisión (opcional)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    // Relaciones
+    season      Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+    
+    @@unique([seasonId, number]) // Una temporada no puede tener episodios duplicados
+    @@map("episodes")
+}
+
+// Modelo de Canal de TV
+model Channel {
+    id        String   @id @default(cuid())
+    name      String
+    coverUrl  String   // URL portada del canal
+    m3u8Url   String   // URL M3U8 del canal
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    @@map("channels")
+}
+
+// Modelo de Mensaje para chat interno
+model Message {
+    id         String   @id @default(cuid())
+    content    String
+    senderId   String
+    receiverId String
+    isRead     Boolean  @default(false)
+    createdAt  DateTime @default(now())
+    
+    // Relaciones
+    sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+    receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+    
+    @@map("messages")
+}
